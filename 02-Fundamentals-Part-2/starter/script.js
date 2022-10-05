@@ -72,7 +72,7 @@ console.log(chinaPopulation3, worldPopulation3, randPopulation3);
 const yearsUntilRetirement = (birthYear, firstName) => {
     const age = 2022 - birthYear;
     const retirement = 65 - age;
-    return `${firstName} retures in ${retirement} years.`;
+    return `${firstName} retires in ${retirement} years.`;
 }
 console.log(yearsUntilRetirement(1998, 'Julie'));
 
@@ -101,6 +101,11 @@ world population for these 4 population values.Use the function
 'percentageOfWorld1' that you created earlier to compute the 4
 percentage values
 */
+const populations = new Array(10, 50, 7900, 400);
+console.log(populations.length == 4);
+
+const percenatges = new Array(percentageOfWorld1(populations[0]), percentageOfWorld1(populations[1]), percentageOfWorld1(populations[2]), percentageOfWorld1(populations[3]));
+console.log(populations, percenatges);
 
 //LECTURE: Basic Array Operations(Methods)
 /*1. Create an array containing all the neighbouring countries of a country of your
@@ -117,6 +122,17 @@ index of the country in the 'neighbours' array, and then use that index to
 change the array at that index position.For example, you can search for
 'Sweden' in the array, and then replace it with 'Republic of Sweden'.
 */
+let neighbours = new Array('Mexico', 'Canada', 'Panama');
+console.log(neighbours);
+neighbours.push('Utopia');
+console.log(neighbours);
+neighbours.pop();
+console.log(neighbours);
+if (!neighbours.includes("Germany"))
+    console.log("Probably not a central European country :D");
+
+neighbours[neighbours.indexOf('Canada')] = 'Republic of Canada';
+console.log(neighbours);
 
 //LECTURE: Introduction to Objects
 /*1. Create an object called 'myCountry' for a country of your choice, containing
