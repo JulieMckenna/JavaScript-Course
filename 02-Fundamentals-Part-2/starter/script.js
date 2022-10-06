@@ -138,13 +138,28 @@ console.log(neighbours);
 /*1. Create an object called 'myCountry' for a country of your choice, containing
 properties 'country', 'capital', 'language', 'population' and
 'neighbours'(an array like we used in previous assignments)
-LECTURE: Dot vs.Bracket Notation
+*/
+const myCountry = {
+    country: "USA",
+    capital: "DC",
+    langugae: "English",
+    population: 1000,
+    neighbours: ['Canada', 'Mexico']
+};
+
+//LECTURE: Dot vs.Bracket Notation
+/*
 1. Using the object from the previous assignment, log a string like this to the
 console: 'Finland has 6 million finnish-speaking people, 3 neighbouring countries
 and a capital called Helsinki.'
 2. Increase the country's population by two million using dot notation, and then
 decrease it by two million using brackets notation.
 */
+console.log(`${myCountry.country} has ${myCountry.population} million ${myCountry.langugae}-speaking people, ${myCountry.neighbours.length} neighbouring countries and a capital called ${myCountry.capital}.`);
+myCountry.population += 2;
+console.log(myCountry.population);
+myCountry['population'] -= 2;
+console.log(myCountry['population']);
 
 //LECTURE: Object Methods
 /*1. Add a method called 'describe' to the 'myCountry' object.This method
@@ -156,6 +171,22 @@ method will set a new property on the object, called 'isIsland'.
 'isIsland' will be true if there are no neighbouring countries, and false if
 there are.Use the ternary operator to set the property.
 */
+const myCountry2 = {
+    country: "USA",
+    capital: "DC",
+    langugae: "English",
+    population: 1000,
+    neighbours: ['Canada', 'Mexico'],
+    describe: function () {
+        console.log(`${this.country} has ${this.population} million ${this.langugae}-speaking people, ${this.neighbours.length} neighbouring countries and a capital called ${this.capital}.`);
+    },
+    checkIsland: function () {
+        this.isIsland = this.neighbours.length === 0 ? true : false;
+    }
+};
+myCountry2.describe();
+myCountry2.checkIsland();
+console.log(myCountry2);
 
 //LECTURE: Iteration: The for Loop
 /*
