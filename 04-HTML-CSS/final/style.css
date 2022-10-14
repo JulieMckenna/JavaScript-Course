@@ -5,8 +5,8 @@
 }
 
 body {
-  background-color: rgb(255, 247, 201);
-  font-family: Arial;
+  background-color: rgba(73, 194, 250, 0.844);
+  font-family: Georgia;
   font-size: 20px;
   padding: 50px;
 }
@@ -19,6 +19,7 @@ h1 {
 h2 {
   margin-bottom: 20px;
   text-align: center;
+  padding: 30px;
 }
 
 p {
@@ -26,7 +27,7 @@ p {
 }
 
 .first {
-  color: red;
+  color: rgb(0, 61, 0);
 }
 
 #your-name {
