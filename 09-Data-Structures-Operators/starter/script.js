@@ -64,6 +64,26 @@ const rest2 = {
   owner: 'Julie',
 };
 
+//Enhanced Object Literals
+// see other file
+
+//looping over arrays
+const menu1 = [...restaurant.starterMenu, ...restaurant.mainMenu];
+
+//can also use contunue and break
+for (const item of menu) console.log(item);
+
+//to get the index of the item is harder
+for (const item of menu1.entries()) {
+  console.log(item); //[idex, item] ie [0, "Pizza"]
+  console.log(`${i + 1}`);
+}
+//A better way to do this
+for (const [i, el] of menu1.entries()) {
+  //destructure the item (since its an array)
+  console.log(`${i + 1}: ${el}`); //1. Pizza
+}
+
 //assign all resturants a number of guests
 //OR
 //rest1.numGuests = rest1.numGuests || 10;

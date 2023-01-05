@@ -1,0 +1,132 @@
+'use strict';
+
+const weekdays = ['mon', 'tues', 'wends', 'thurs', 'fri', 'sat', 'sun'];
+
+// Data needed for first part of the section
+const openingHours = {
+  [weekdays[3]]: {
+    open: 12,
+    close: 22,
+  },
+  fri: {
+    open: 11,
+    close: 23,
+  },
+  sat: {
+    open: 0, // Open 24 hours
+    close: 24, // or 12+12
+  },
+};
+
+const restaurant = {
+  name: 'Classico Italiano',
+  location: 'Via Angelo Tavanti 23, Firenze, Italy',
+  categories: ['Italian', 'Pizzeria', 'Vegetarian', 'Organic'],
+  starterMenu: ['Focaccia', 'Bruschetta', 'Garlic Bread', 'Caprese Salad'],
+  mainMenu: ['Pizza', 'Pasta', 'Risotto'],
+  //old object literals
+  //openingHours: openingHours,
+  //new object literals
+  openingHours,
+
+  //this is the same as `order: function ()
+  order(starterIndex, mainIndex) {
+    return [this.starterMenu[starterIndex], this.mainMenu[mainIndex]];
+  },
+  orderDelivery(
+    {
+      starterIndex = 1,
+      mainIndex = 0,
+      time = `20:00`,
+      address,
+    } /*imedate destructoring of the obj passed in*/
+  ) {
+    console.log(
+      `Order recieved. ${this.starterMenu[starterIndex]} and 
+      ${this.mainMenu[mainIndex]} will be delievred to ${address} at ${time}`
+    );
+  },
+  orderPasta(ing1, ing2, ing3) {
+    console.log(`Here is your pasta with ${ing1}, ${ing2} and ${ing3}`);
+  },
+  orderPizza(mainIngredient, ...otherIngredidents) {
+    console.log(
+      `Ordered Pizza. Main ingredient: ${mainIngredient} and the rest of the ingredients are: ${otherIngredidents}`
+    );
+    console.log(mainIngredient);
+    console.log(otherIngredidents);
+  },
+};
+console.log('------- Local Assignment Operators -------');
+const rest1 = {
+  name: 'Capri',
+  numGuests: 0,
+};
+
+const rest2 = {
+  name: 'La Pizza',
+  owner: 'Julie',
+};
+//Enhanced Object Literals - see above
+
+//operation chaining - if property does not exist returns undefined
+//console.log(restaurant.openingHours.mon.open); //get an arror becuase not defined
+//without operational chaining
+if (restaurant.openingHours && restaurant.openingHours.mon)
+  console.log(restaurant.openingHours.mon.open);
+
+//With optional chaining
+console.log(restaurant.openingHours.mon?.open); //get undefined - if monday not exist
+console.log(restaurant.openingHours?.mon?.open); //get undefined - if opening hours and monday don't exist
+
+const days = ['mon', 'tues', 'wends', 'thurs', 'fri', 'sat', 'sun'];
+for (const day of days) {
+  console.log(day);
+  const open = restaurant.openingHours[day]?.open;
+  console.log(`On ${day} we are open at ${open}`); // give undefined at the other days but 0 with say undefeined (weekends)
+}
+
+for (const day of days) {
+  console.log(day);
+  const open = restaurant.openingHours[day]?.open ?? `closed`;
+  console.log(`On ${day} we are open at ${open}`); //closed for undefined days and all values for otehrs (including 0)
+}
+
+//Methods
+console.log(restaurant.order?.(0, 1) ?? 'Method does not exist');
+console.log(restaurant.orderRisotto?.(0, 1) ?? 'Method does not exist'); //will resturn `Method does not exist`
+
+//Arrays
+const users = [{ name: 'Julie', email: 'julie@me.com' }];
+console.log(users[0]?.name ?? 'User array empty'); //does the same thing as the if statement below
+
+if (users.length > 0) {
+  console.log(users[0].name);
+} else console.log('user array empty');
+
+//Looping Objects: Object keys, values and entries
+for (const day of Object.keys(openingHours)) {
+  console.log(day); //retruns thu, fri, sat
+}
+
+const properties = Object.keys(openingHours);
+console.log(properties); //array of days open
+let openStr = `We are open on ${properties.length} days: `;
+for (const day of properties) {
+  openStr += `${day}, `;
+}
+console.log(openStr);
+
+//Property Values
+const values = Object.values(openingHours);
+console.log(values); //array lising open and closew times for each day
+
+//entires
+Object.entries(openingHours);
+console.log(entries); //array showing both the key and value
+
+for (const [key, { open, close }] of entries) {
+  console.log(`On ${key} we open at ${open} and close at ${close}.`); //senatce per each day. ex. On Fri we open at 11 and close at 23
+}
+
+//Sets
