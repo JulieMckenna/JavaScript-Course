@@ -63,10 +63,14 @@ const inputClosePin = document.querySelector('.form__input--pin');
 
 //--------------------------------------------------------------------------------------------
 //creating dom elements
-const displayMovements = function (movements) {
+const displayMovements = function (movements, sort = false) {
   containerMovements.innerHTML = '';
+
+  //if sorted is set to true, sort in acsending order
+  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
+
   //for each movement create a dom element for it
-  movements.forEach(function (mov, i) {
+  movs.forEach(function (mov, i) {
     const movementType = mov > 0 ? 'deposit' : 'withdrawal';
     const html = `
       <div class="movements__row">
@@ -241,6 +245,13 @@ btnClose.addEventListener('click', e => {
   inputCloseUsername.value = inputClosePin.value = '';
 });
 
+let sortedState = false;
+btnSort.addEventListener('click', e => {
+  e.preventDefault();
+  displayMovements(currentAccount.movements, !sortedState);
+  sortedState = !sortedState;
+});
+
 /////////////////////////////////////////////////
 console.log(`---- Lectures ---`);
 
@@ -256,6 +267,33 @@ const currencies = new Map([
 const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 
 /////////////////////////////////////////////////
+//--------------------------------------------------------------------------------------------
+//Sorting arrays
+
+//sort only works on strings
+const owners = ['Jonas', 'Martha', 'Zach', 'Adam'];
+console.log(owners.sort()); //changes teh array
+console.log(owners);
+
+//numbers
+console.log(movements);
+console.log(movements.sort()); //-130, -400, -650, 1300, 200, 3000, 450, 70
+
+//return < 0: a, b (keep order)
+//return > 0: b, a (switch order)
+//accessending
+movements.sort((a, b) => (a > b ? 1 : -1));
+
+//could also do
+movements.sort((a, b) => a - b);
+console.log(movements); //-650, -400, -130, 70, 200, 450, 1300, 3000
+
+//decessending
+movements.sort((a, b) => (b > a ? 1 : -1));
+//could also do
+movements.sort((a, b) => b - a);
+console.log(movements); //-650, -400, -130, 70, 200, 450, 1300, 3000
+
 //--------------------------------------------------------------------------------------------
 //Flat and flatmap
 const arr3 = [[1, 2, 3], [4, 5, 6], 7, 8];
