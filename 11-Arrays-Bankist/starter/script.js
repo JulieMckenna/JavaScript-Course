@@ -78,40 +78,37 @@ const displayMovements = function (movements) {
     containerMovements.insertAdjacentHTML('afterbegin', html); //afterbegin adds the next in top so elements would be 3,2,1 like a stack - most recent on top
   });
 };
-displayMovements(account1.movements); //will need to change for per user loged in
 //console.log(containerMovements.innerHTML); shows all the html created from the foreach loop
 
 //Calcualte and Display the Balance
-const calcDisplayBalance = movements => {
-  const balance = movements.reduce((acc, mov) => acc + mov, 0);
-  labelBalance.textContent = `${balance} EUR`;
+const calcDisplayBalance = account => {
+  account.balance = account.movements.reduce((acc, mov) => acc + mov, 0);
+  labelBalance.textContent = `${account.balance}€`;
 };
-calcDisplayBalance(account1.movements); //will need to change per user loged in
 
 //Calc Display Summary
-const calcDisplaySummary = movements => {
+const calcDisplaySummary = acc => {
   //Calc money coming in
-  const incomes = movements
+  const incomes = acc.movements
     .filter(mov => mov > 0)
     .reduce((acc, mov) => acc + mov, 0);
   labelSumIn.textContent = `${incomes}€`;
 
   //calc money coming in
-  const outs = movements
+  const outs = acc.movements
     .filter(mov => mov < 0)
     .reduce((acc, mov) => acc + mov, 0);
   labelSumOut.textContent = `${Math.abs(outs)}€`;
 
   //calc intreset 1.2% on all the depoists
-  const interest = movements
+  const interest = acc.movements
     .filter(mov => mov > 0) //gets deposits
-    .map(mov => (mov * 1.2) / 100) //gets interest on the deposit values
+    .map(mov => (mov * acc.interestRate) / 100) //gets interest on the deposit values
     .filter(mov => mov >= 1) //only values that are greater than 1
     .reduce((acc, mov) => acc + mov, 0); //adds them all together
   labelSumInterest.textContent = `${interest}€`;
   console.log(incomes, outs, interest);
 };
-calcDisplaySummary(account1.movements); //chnage to user when loged to
 
 //Create username
 const createUserName = user => {
@@ -131,7 +128,122 @@ const createUserNames = accs => {
 createUserNames(accounts);
 console.log(accounts);
 
+const updateUI = acc => {
+  //Display Movements
+  displayMovements(acc.movements);
+
+  //Display Balance
+  calcDisplayBalance(acc);
+
+  //Display Summary
+  calcDisplaySummary(acc);
+  console.log(currentAccount);
+};
+
+//Login feature of application
+/*
+  check username and pin when click the login button or hit enter
+  then load the data created above
+*/
+let currentAccount;
+
+btnLogin.addEventListener('click', e => {
+  e.preventDefault();
+  console.log('Login');
+  currentAccount = accounts.find(
+    acc => acc.username === inputLoginUsername.value
+  );
+  //the ? will make sure it will only execute if it exists
+  if (currentAccount?.pin == Number(inputLoginPin.value)) {
+    //Display UI and Welcome Messsage
+    labelWelcome.textContent = `Welcome back, ${
+      currentAccount.owner.split(' ')[0]
+    }`;
+    containerApp.style.opacity = 100;
+
+    //clear the input fields
+    inputLoginPin.value = inputLoginUsername.value = ''; //remove the data from the input fields
+    inputLoginPin.blur(); //removes the cursor from the inout field
+
+    updateUI(currentAccount);
+
+    console.log('Loged in');
+  }
+
+  console.log(currentAccount);
+});
+
+//trasnfer
+btnTransfer.addEventListener('click', e => {
+  e.preventDefault(); //makes sure it doesnt reload
+  const amount = Number(inputTransferAmount.value);
+  const recieveAcc = accounts.find(
+    acc => acc.username === inputTransferTo.value
+  ); //should be the username 'jd'
+  console.log(amount, recieveAcc);
+
+  //clear the input fields
+  inputTransferAmount.value = inputTransferTo.value = '';
+
+  //check current user has enough money && amount is greater than 0 && that the recieving account exists and is not the same as teh current user
+  if (
+    amount > 0 &&
+    recieveAcc &&
+    currentAccount.balance >= amount &&
+    recieveAcc?.username !== currentAccount.username
+  ) {
+    console.log(`Transfer Valid`);
+    //add negative movement to current user
+    currentAccount.movements.push(-amount);
+    //add positive movement to reciving user
+    recieveAcc.movements.push(amount);
+
+    //update UI
+    updateUI(currentAccount);
+  }
+});
+
+//Loan
+btnLoan.addEventListener('click', e => {
+  e.preventDefault();
+  const loanAmount = Number(inputLoanAmount.value);
+  inputLoanAmount.value = ''; //clear field
+
+  if (
+    loanAmount > 0 &&
+    currentAccount.movements.some(mov => mov >= loanAmount * 0.1)
+  ) {
+    //Add positive depoit
+    currentAccount.movements.push(loanAmount);
+
+    //update UI
+    updateUI(currentAccount);
+  }
+});
+
+//Close account
+btnClose.addEventListener('click', e => {
+  e.preventDefault();
+  if (
+    inputCloseUsername.value === currentAccount.username &&
+    Number(inputClosePin.value) === currentAccount.pin
+  ) {
+    const index = accounts.findIndex(
+      acc => acc.username === currentAccount.username
+    );
+    console.log(`Account Closed`);
+    //Removers account
+    accounts.splice(index, 1);
+
+    //hide UI
+    containerApp.style.opacity = 0;
+  }
+  inputCloseUsername.value = inputClosePin.value = '';
+});
+
 /////////////////////////////////////////////////
+console.log(`---- Lectures ---`);
+
 /////////////////////////////////////////////////
 // LECTURES
 //key, value
@@ -144,6 +256,73 @@ const currencies = new Map([
 const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 
 /////////////////////////////////////////////////
+//--------------------------------------------------------------------------------------------
+//Flat and flatmap
+const arr3 = [[1, 2, 3], [4, 5, 6], 7, 8];
+console.log(arr3.flat()); //removes nested arrays [1, 2, 3, 4, 5, 6, 7, 8]
+
+const arrDeep = [[[1, 2], 3], [4, [5, 6]], 7, 8];
+console.log(arrDeep.flat()); //only one level deep [[1,2], 3, 4, [5, 6], 7, 8]
+console.log(arrDeep.flat(2)); // removes 2 levels deep [[1, 2, 3, 4, 5, 6, 7, 8] - 2 is deepness
+
+const accountMovements = accounts.map(acc => acc.movements);
+console.log(accountMovements); //arrays of each movements per account
+const allMovements = accountMovements.flat();
+console.log(allMovements);
+const overallbalance = allMovements.reduce((acc, mov) => acc + mov, 0);
+console.log(overallbalance);
+
+// ^ with chaining
+const overallBalance = accounts
+  .map(acc => acc.movements)
+  .flat()
+  .reduce((acc, mov) => acc + mov, 0);
+console.log(overallBalance);
+
+//flatmap combines map and flat together
+const overallBalance2 = accounts
+  .flatMap(acc => acc.movements) //only goes 1 level deep
+  .reduce((acc, mov) => acc + mov, 0);
+console.log(overallBalance);
+//--------------------------------------------------------------------------------------------
+//some and every
+//Equality
+console.log(movements);
+console.log(movements.includes(-130));
+
+//Some : Condition
+const anyDeposits = movements.some(mov => mov > 0);
+console.log(anyDeposits);
+
+const anyDepositsOver1500 = movements.some(mov => mov > 1500);
+console.log(anyDepositsOver1500);
+
+//Every
+console.log(movements.every(mov => mov > 0));
+console.log(account4.movements.every(mov => mov > 0));
+
+//Seperate callback
+const deposit = mov => mov > 0;
+console.log(movements.some(deposit));
+console.log(movements.every(deposit));
+console.log(movements.filter(deposit));
+
+//--------------------------------------------------------------------------------------------
+//find method - loops over array retrives an element
+//  retrives first element in the array
+const firstWithdrawl = movements.find(mov => mov < 0);
+console.log(firstWithdrawl);
+
+console.log(accounts);
+const account = accounts.find(acc => acc.owner === 'Jessica Davis'); //only gets Jessicas account
+console.log(account);
+
+let accountFor = {};
+for (const acc of accounts) {
+  acc.owner === 'Jessica Davis' ? (accountFor = acc) : false;
+}
+console.log(accountFor);
+
 //--------------------------------------------------------------------------------------------
 //Chaning methods
 const euroToUsd = 1.1;
