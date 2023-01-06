@@ -88,6 +88,31 @@ const calcDisplayBalance = movements => {
 };
 calcDisplayBalance(account1.movements); //will need to change per user loged in
 
+//Calc Display Summary
+const calcDisplaySummary = movements => {
+  //Calc money coming in
+  const incomes = movements
+    .filter(mov => mov > 0)
+    .reduce((acc, mov) => acc + mov, 0);
+  labelSumIn.textContent = `${incomes}€`;
+
+  //calc money coming in
+  const outs = movements
+    .filter(mov => mov < 0)
+    .reduce((acc, mov) => acc + mov, 0);
+  labelSumOut.textContent = `${Math.abs(outs)}€`;
+
+  //calc intreset 1.2% on all the depoists
+  const interest = movements
+    .filter(mov => mov > 0) //gets deposits
+    .map(mov => (mov * 1.2) / 100) //gets interest on the deposit values
+    .filter(mov => mov >= 1) //only values that are greater than 1
+    .reduce((acc, mov) => acc + mov, 0); //adds them all together
+  labelSumInterest.textContent = `${interest}€`;
+  console.log(incomes, outs, interest);
+};
+calcDisplaySummary(account1.movements); //chnage to user when loged to
+
 //Create username
 const createUserName = user => {
   return user
@@ -120,11 +145,19 @@ const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 
 /////////////////////////////////////////////////
 //--------------------------------------------------------------------------------------------
+//Chaning methods
+const euroToUsd = 1.1;
+const totalDepositsUSD = movements
+  .filter(mov => mov > 0) //gets deposits (above 0)
+  .map(mov => mov * euroToUsd) //converts to usd (*1.1)
+  .reduce((acc, mov) => acc + mov, 0); //adds them all together
+console.log(totalDepositsUSD);
+
+//--------------------------------------------------------------------------------------------
 //Data tranasformation: map, filter, reduce
 //map (new array) with some operation done to it
 console.log(`---- Data transformations: Map ---`);
 
-const euroToUsd = 1.1;
 const movementsUSD = movements.map(function (mov) {
   return mov * euroToUsd;
   //return 23; would make an array the length of the movements array with all values 23
@@ -257,7 +290,7 @@ console.log(arr.slice(1, -2)); // new array containg: b, c  -2 not the last 2
 
 //arr.slice() is the same as [...arr]
 
-//SPLICE - changes array
+//SPLICE - changes array - dont use for chaining
 console.log(arr.splice(2)); //c, d, e
 console.log(arr); // whats left after splice so: a, b
 arr.splice(-1); //removes the last element
