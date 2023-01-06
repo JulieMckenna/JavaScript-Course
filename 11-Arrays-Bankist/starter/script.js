@@ -78,8 +78,33 @@ const displayMovements = function (movements) {
     containerMovements.insertAdjacentHTML('afterbegin', html); //afterbegin adds the next in top so elements would be 3,2,1 like a stack - most recent on top
   });
 };
-displayMovements(account1.movements);
+displayMovements(account1.movements); //will need to change for per user loged in
 //console.log(containerMovements.innerHTML); shows all the html created from the foreach loop
+
+//Calcualte and Display the Balance
+const calcDisplayBalance = movements => {
+  const balance = movements.reduce((acc, mov) => acc + mov, 0);
+  labelBalance.textContent = `${balance} EUR`;
+};
+calcDisplayBalance(account1.movements); //will need to change per user loged in
+
+//Create username
+const createUserName = user => {
+  return user
+    .toLowerCase() //gets to lowercase
+    .split(' ') //splits to an array each word
+    .map(word => word[0]) //gets the first letter of each word
+    .join(''); //joins the letters together
+};
+
+//add usernames to each of the accounts
+const createUserNames = accs => {
+  accs.forEach(acc => {
+    acc.username = createUserName(acc.owner);
+  });
+};
+createUserNames(accounts);
+console.log(accounts);
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
@@ -94,6 +119,80 @@ const currencies = new Map([
 const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 
 /////////////////////////////////////////////////
+//--------------------------------------------------------------------------------------------
+//Data tranasformation: map, filter, reduce
+//map (new array) with some operation done to it
+console.log(`---- Data transformations: Map ---`);
+
+const euroToUsd = 1.1;
+const movementsUSD = movements.map(function (mov) {
+  return mov * euroToUsd;
+  //return 23; would make an array the length of the movements array with all values 23
+});
+
+const movementsUSDArrow = movements.map(mov => mov * euroToUsd);
+console.log(movements);
+console.log(movementsUSD);
+
+//does the same thing
+const movementsUSDFor = [];
+for (const mov of movements) {
+  movementsUSDFor.push(mov * euroToUsd);
+}
+console.log(movementsUSDFor);
+
+const movementsDescriptions = movements.map(
+  (mov, i) =>
+    `Movement ${i + 1}: You ${mov > 0 ? 'deposited' : 'withdrew'} ${Math.abs(
+      mov
+    )}`
+);
+//different from foreach, instead of printing each line, return the line and puts it into an array
+console.log(movementsDescriptions);
+
+//filter (new array) contains the array elemenets that pass a certaiun condition
+console.log(`---- Data transformations: Filter ---`);
+const deposits = movements.filter(mov => mov > 0); //gets all values greater than 0
+console.log(`Deposits ${deposits}`);
+
+const depositsFor = [];
+for (const mov of movements) {
+  if (mov > 0) {
+    depositsFor.push(mov);
+  }
+}
+console.log(depositsFor);
+
+const withdrawals = movements.filter(mov => mov < 0);
+console.log(`Withdrawals: ${withdrawals}`);
+
+//reduce (value) puts all elements into a value (i.e add all elements together)
+console.log(`---- Data transformations: Reduce ---`);
+
+//accumilator (acc) lile snowball (sum)
+const balance = movements.reduce((accumilator, cur, i, arr) => {
+  console.log(`Iteration ${i}: ${accumilator}`);
+  return accumilator + cur;
+}, 0); //this 0 is the starting value of the acc
+console.log(balance);
+
+const balanceArrow = movements.reduce(
+  (accumilator, cur) => accumilator + cur,
+  0
+);
+
+let balance2 = 0;
+for (const mov of movements) {
+  balance2 += mov;
+}
+console.log(balance2);
+
+//Get max value of array
+const maxBalanceVal = movements.reduce(
+  (acc, mov) => (mov > acc ? (acc = mov) : (acc = acc)),
+  movements[1]
+);
+console.log(maxBalanceVal);
 //--------------------------------------------------------------------------------------------
 //foreach with maps and sets
 currencies.forEach(function (value, key, map) {
